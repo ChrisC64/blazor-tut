@@ -1,0 +1,27 @@
+﻿<div class="game-container" tabindex="0" @onclick="_gameManager.StartGame" @onkeyup="_gameManager.HandleKeyUp">
+    <div class="sky">
+        <BirdComponent Model="_gameManager.Bird" />
+    </div>
+    <div class="ground"></div>
+    @foreach (var pipe in _gameManager.Pipes)
+    {
+        <PipeComponent Model="pipe" />
+    }
+
+</div>
+
+@code {
+    GameManager _gameManager;
+
+    protected override void OnInitialized()
+    {
+        _gameManager = new GameManager();
+        _gameManager.OnRender += (o, e) => StateHasChanged();
+    }
+
+    void StartGame()
+    {
+        _gameManager.MainLoop();
+    }
+
+}
