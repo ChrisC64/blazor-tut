@@ -3,6 +3,6 @@
 @code {
 
     [Parameter] public BirdModel Model { get; set; }
-
+    // Build the css information of the bird here, so it can be compiled up with different values at runtime
     string _birdCss => $"bottom: {Model.DistanceFromGround}px";
 }

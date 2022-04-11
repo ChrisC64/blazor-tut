@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
+using System.Text.Json;
+using System.Net.Http;
 
 namespace BlazorTut.Models
 {
@@ -6,15 +8,18 @@ namespace BlazorTut.Models
     {
         private readonly int _gravity = 2;
 
+        public GameState GameState { get; private set; }
         public event EventHandler? OnRender;
 
         public BirdModel Bird { get; private set; }
         public Queue<PipeModel> Pipes { get; private set; }
         public bool IsRunning { get; private set; } = false;
-        public GameManager()
+
+        public GameManager(GameState startState)
         {
             Bird = new BirdModel();
             Pipes = new Queue<PipeModel>();
+            GameState = startState;
         }
 
         public async void MainLoop()
@@ -61,11 +66,22 @@ namespace BlazorTut.Models
                 GameOver();
                 return;
             }
+
+            var centeredPipe = Pipes.FirstOrDefault(p => p.IsCentered());
+
+            if (centeredPipe != null)
+            {
+                bool hasCollidedWithBottomPipe = Bird.DistanceFromGround < centeredPipe.GapBottom - 150;//Ground height(150)
+                bool hasCollidedWithTopPipe = Bird.DistanceFromGround + 45 > centeredPipe.GapTop - 150; // Bird height (45)
+
+                if (hasCollidedWithBottomPipe || hasCollidedWithTopPipe)
+                    GameOver();
+            }
         }
 
         void ManagePipes()
         {
-            if(!Pipes.Any() || Pipes.Last().DistanceFromLeft <= 250)
+            if (!Pipes.Any() || Pipes.Last().DistanceFromLeft <= 250)
             {
                 Pipes.Enqueue(new PipeModel());
             }

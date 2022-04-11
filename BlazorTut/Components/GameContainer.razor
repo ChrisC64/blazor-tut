@@ -1,4 +1,6 @@
-﻿<div class="game-container" tabindex="0" @onclick="_gameManager.StartGame" @onkeyup="_gameManager.HandleKeyUp">
+﻿<div class="border-left"></div>
+<div class="game-container" tabindex="0" @onclick="_gameManager.StartGame" @onkeyup="_gameManager.HandleKeyUp">
+    <div class="border-top"></div>
     <div class="sky">
         <BirdComponent Model="_gameManager.Bird" />
     </div>
@@ -9,13 +11,16 @@
     }
 
 </div>
+<div class="border-right"></div>
+@inject HttpClient _client;
 
 @code {
     GameManager _gameManager;
 
     protected override void OnInitialized()
     {
-        _gameManager = new GameManager();
+        GameState startState = new GameState(500, 730);
+        _gameManager = new GameManager(startState);
         _gameManager.OnRender += (o, e) => StateHasChanged();
     }
 
